@@ -4,6 +4,7 @@ const express = require("express");
 const authRouter = require("./api/auth/authRouter");
 const usersRouter = require("./api/users/usersRouter");
 const session = require("express-session");
+const { loginRequired } = require("./api/auth/authMiddleware");
 
 
 const server = express();
@@ -26,7 +27,7 @@ const sessionConfig = {
 server.use(session(sessionConfig));
 server.use(express.json());
 server.use("/api/auth", authRouter);
-server.use("/api/users", usersRouter);
+server.use("/api/users", loginRequired, usersRouter);
 
 
 server.listen(PORT, () => "Server is listening...");

@@ -1,6 +1,8 @@
 const express = require("express");
 const user = require("../users/usersModel");
+const bcrypt = require("bcryptjs");
 const { checkUserDataProvided, checkUserNameUnique } = require("./authMiddleware");
+const session = require("express-session");
 
 const router = express.Router();
 
@@ -21,8 +23,24 @@ router.post("/register", checkUserDataProvided, checkUserNameUnique, (req, res) 
     });
 });
 
-router.post("/login", (req, res) => {
-    res.status(501).send("Not implemented");
+router.post("/login", checkUserDataProvided, (req, res) => {
+    const credentials = req.body;
+
+    user.getByName(credentials.name)
+        .then(users => {
+            if (users && bcrypt.compareSync(credentials.password, users[0].password)) {
+                req.session.name = credentials.name;
+                req.session.isLoggedIn = true;
+                res.status(200).json({
+                    success: `Welcome, ${credentials.name}`
+                })
+            } else {
+                res.status(401).json({
+                    error: "Access denied",
+                    description: "Please enter correct name and password."
+                });
+            }
+        })
 });
 
 router.get("/logout", (req, res) => {

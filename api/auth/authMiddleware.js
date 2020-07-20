@@ -1,8 +1,10 @@
 const user = require("../users/usersModel");
+const session = require("express-session");
 
 module.exports = {
     checkUserDataProvided,
-    checkUserNameUnique
+    checkUserNameUnique,
+    loginRequired
 };
 
 function checkUserNameUnique (req, res, next) {
@@ -34,6 +36,17 @@ function checkUserDataProvided (req, res, next) {
         res.status(400).json({
             error: "Bad request.",
             description: "Please provide valid name and password."
+        });
+    }
+}
+
+function loginRequired (req, res, next) {
+    if (req.session.isLoggedIn && req.session.name) {
+        next();
+    } else {
+        res.status(401).json({
+            error: "Access denied",
+            description: "Please log in."
         });
     }
 }
