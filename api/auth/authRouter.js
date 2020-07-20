@@ -44,7 +44,18 @@ router.post("/login", checkUserDataProvided, (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-    res.status(501).send("Not implemented");
+    req.session && req.session.destroy(error => {
+        if (error) {
+            res.status(500).json({
+                error: "Server error",
+                description: "Cannot access session"
+            });
+        } else {
+            res.status(200).json({
+                success: "You've successfully logged out."
+            });
+        }
+    });
 });
 
 module.exports = router;
