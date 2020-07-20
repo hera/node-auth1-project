@@ -1,0 +1,25 @@
+const db = require("../../data/dbConfig");
+const bcrypt = require("bcryptjs");
+
+module.exports = {
+    getByName,
+    add
+};
+
+function getByName (name) {
+    return db("user").where({name});
+}
+
+function add (userData) {
+    const salt = bcrypt.genSaltSync(8);
+    const hashedPassword = bcrypt.hashSync(userData.password, salt);
+    
+    return db("user").insert(
+        {
+            name: userData.name,
+            password: hashedPassword,
+            about: userData.about || null
+        },
+        ["id"]
+    );
+}
