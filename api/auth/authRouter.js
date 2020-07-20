@@ -28,7 +28,7 @@ router.post("/login", checkUserDataProvided, (req, res) => {
 
     user.getByName(credentials.name)
         .then(users => {
-            if (users && bcrypt.compareSync(credentials.password, users[0].password)) {
+            if (users.length && bcrypt.compareSync(credentials.password, users[0].password)) {
                 req.session.name = credentials.name;
                 req.session.isLoggedIn = true;
                 res.status(200).json({
