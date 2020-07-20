@@ -3,8 +3,13 @@ const bcrypt = require("bcryptjs");
 
 module.exports = {
     getByName,
-    add
+    add,
+    getAll
 };
+
+function getAll () {
+    return db("user").select("id", "name", "about");
+}
 
 function getByName (name) {
     return db("user").where({name});
