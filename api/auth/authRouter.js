@@ -41,6 +41,12 @@ router.post("/login", checkUserDataProvided, (req, res) => {
                 });
             }
         })
+        .catch(error => {
+            res.status(500).json({
+                error: "Server error. Could not login.",
+                description: error
+            });
+        });
 });
 
 router.get("/logout", (req, res) => {
